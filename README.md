@@ -4,30 +4,13 @@ The Smallstep agent runs on your devices to securely manage end-to-end certifica
 
 This plugin is for users of [Smallstep Certificate Manager](https://smallstep.com/).
 
-## Linux Installer
+## Installation
 
-The [`smallstep-agent-install.sh`](smallstep-agent-install.sh) script installs the Smallstep agent on supported Linux distributions:
+For install instructions across all platforms, see [Installing the Smallstep Agent](https://smallstep.com/docs/platform/smallstep-app/).
 
-- Fedora
-- RHEL, CentOS Stream, Rocky Linux, AlmaLinux
-- Debian, Ubuntu
-- Arch Linux variants
+## Linux Installer Script
 
-### Usage
-
-Download and run:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/smallstep/step-agent-plugin/main/smallstep-agent-install.sh -o smallstep-agent-install.sh
-sudo bash smallstep-agent-install.sh --team <your-team>
-```
-
-To pin to a specific version, use a commit SHA or tag:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/smallstep/step-agent-plugin/<commit-sha>/smallstep-agent-install.sh -o smallstep-agent-install.sh
-sudo bash smallstep-agent-install.sh --team <your-team>
-```
+The [`smallstep-agent-install.sh`](smallstep-agent-install.sh) script automates agent installation on supported Linux distributions. See the [packages.smallstep.com](https://github.com/smallstep/packages.smallstep.com) repo for GCS deployment instructions.
 
 ### Testing
 
@@ -36,7 +19,3 @@ Run the test script to validate the installer across all supported distros using
 ```bash
 bash scripts/test-smallstep-agent-installer.sh
 ```
-
-### GCS Deployment
-
-This script is also deployed to GCS and served at `https://packages.smallstep.com/scripts/smallstep-agent-install.sh`. See the [packages.smallstep.com](https://github.com/smallstep/packages.smallstep.com) repo for upload instructions.
