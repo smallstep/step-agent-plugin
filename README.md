@@ -11,6 +11,7 @@ The [`smallstep-agent-install.sh`](smallstep-agent-install.sh) script installs t
 - Fedora
 - RHEL, CentOS Stream, Rocky Linux, AlmaLinux
 - Debian, Ubuntu
+- Arch Linux variants
 
 ### Usage
 

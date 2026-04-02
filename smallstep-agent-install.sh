@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # SPDX-License-Identifier: Apache-2.0
 #
 # Copyright (C) 2022 Smallstep Labs, Inc. All Rights Reserved.
@@ -22,7 +22,7 @@ cat <<'EOF'
                 Register smallstep agent on smallstep.com
                  or your smallstep run-anywhere cluster
 
-                      https://u.step.sm/docs/agent
+                    https://smallstep.com/docs/agent
 
                           Copyright (C) 2025
                           Smallstep Labs, Inc
@@ -107,26 +107,9 @@ done
 
 if [[ -v STEP_AGENT_TEAM ]]; then
     TEAM=${STEP_AGENT_TEAM}
-else
-    if [ -t 0 ] ; then
-      echo ""
-      echo "A team is required!"
-      read -p "Team: " TEAM
-      TEAM=${TEAM}
-    else
-      echo "A smallstep team is required!"
-      echo ""
-      echo "Pipe detected!"
-      echo "Rerun with STEP_AGENT_TEAM environment variable set or download"
-      echo "and run the script manually to enable flags and prompts to"
-      echo "set your team."
-      echo ""
-      helptext
-      exit 1
-    fi
 fi
 
-if [ "$(grep -Ei 'fedora|redhat|centos|rocky|almalinux|debian|buntu' /etc/*release)" ]; then
+if [ "$(grep -Ei 'fedora|redhat|centos|rocky|almalinux|debian|buntu|arch' /etc/*release)" ]; then
 
   DISTRO=$(grep ^ID= /etc/os-release | cut -d'=' -f2 | tr -d '"')
 
@@ -174,10 +157,27 @@ EOT
   apt-get update && apt-get -y install step-agent-plugin
   fi
 
+  if [ "$(grep -Ei 'arch' /etc/*release)" ]; then
+    echo "Installing step-agent-plugin for ${DISTRO}..."
+
+    VERSION=$(curl -fsSL https://api.github.com/repos/smallstep/step-agent-plugin/releases/latest | grep '"tag_name"' | sed 's/.*"v\(.*\)".*/\1/')
+    if [[ -z "$VERSION" ]]; then
+      echo "Failed to determine the latest step-agent-plugin version."
+      exit 1
+    fi
+
+    PKG_URL="https://github.com/smallstep/step-agent-plugin/releases/download/v${VERSION}/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+
+    echo "Downloading step-agent-plugin ${VERSION}..."
+    curl -fsSL -o "/tmp/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst" "$PKG_URL"
+    pacman -U --noconfirm "/tmp/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+    rm -f "/tmp/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+  fi
+
 else
   echo "Only the following Linux distributions are supported at this time:"
   echo ""
-  echo "Fedora, RHEL, Centos Stream, Rocky Linux, AlmaLinux, Debian, and Ubuntu"
+  echo "Fedora, RHEL, Centos Stream, Rocky Linux, AlmaLinux, Debian, Ubuntu, and Arch Linux variants"
   exit 1
 fi
 echo ""
@@ -196,10 +196,18 @@ else
   echo "Enabling and starting step-agent.service..."
   systemctl enable --now step-agent.service
   systemctl enable --now step-agent-restart.path
+fi
+
+if [ -z "$TEAM" ]; then
+  echo ""
+  echo "To continue, register this device with your Smallstep team:"
+  echo ""
+  echo "${bold}sudo step-agent-plugin register <team-slug>${normal}"
+  echo ""
+else
   echo ""
   echo "To continue, register this device with your Smallstep team:"
   echo ""
   echo "${bold}sudo step-agent-plugin register ${TEAM}${normal}"
   echo ""
 fi
-
