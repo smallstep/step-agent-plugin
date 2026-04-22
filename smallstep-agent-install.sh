@@ -127,7 +127,7 @@ gpgkey=https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
 EOT
 
   dnf makecache
-  dnf install --best -y step-agent-plugin
+  dnf install --best -y step-agent
   fi
 
   if [[ "$DISTRO" == "fedora" ]]; then
@@ -144,7 +144,7 @@ gpgkey=https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
 EOT
 
   dnf makecache
-  dnf install --best -y step-agent-plugin
+  dnf install --best -y step-agent
   fi
 
   if [ "$(grep -Ei 'debian|buntu' /etc/*release)" ]; then
@@ -154,24 +154,24 @@ EOT
     cat << EOT > /etc/apt/sources.list.d/smallstep.list
 deb [signed-by=/etc/apt/trusted.gpg.d/smallstep.asc] https://packages.smallstep.com/stable/debian debs main
 EOT
-  apt-get update && apt-get -y install step-agent-plugin
+  apt-get update && apt-get -y install step-agent
   fi
 
   if [ "$(grep -Ei 'arch' /etc/*release)" ]; then
-    echo "Installing step-agent-plugin for ${DISTRO}..."
+    echo "Installing step-agent for ${DISTRO}..."
 
     VERSION=$(curl -fsSL https://api.github.com/repos/smallstep/step-agent-plugin/releases/latest | grep '"tag_name"' | sed 's/.*"v\(.*\)".*/\1/')
     if [[ -z "$VERSION" ]]; then
-      echo "Failed to determine the latest step-agent-plugin version."
+      echo "Failed to determine the latest step-agent version."
       exit 1
     fi
 
-    PKG_URL="https://github.com/smallstep/step-agent-plugin/releases/download/v${VERSION}/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+    PKG_URL="https://github.com/smallstep/step-agent-plugin/releases/download/v${VERSION}/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
 
-    echo "Downloading step-agent-plugin ${VERSION}..."
-    curl -fsSL -o "/tmp/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst" "$PKG_URL"
-    pacman -U --noconfirm "/tmp/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
-    rm -f "/tmp/step-agent-plugin-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+    echo "Downloading step-agent ${VERSION}..."
+    curl -fsSL -o "/tmp/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst" "$PKG_URL"
+    pacman -U --noconfirm "/tmp/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+    rm -f "/tmp/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
   fi
 
 else
@@ -183,7 +183,7 @@ fi
 echo ""
 echo "The Smallstep agent has been installed!"
 echo ""
-step-agent-plugin version
+step-agent version
 echo ""
 
 if [[ -f /.dockerenv ]] || [[ "$container" =~ ^(oci|podman)$ ]]; then
@@ -202,12 +202,12 @@ if [ -z "$TEAM" ]; then
   echo ""
   echo "To continue, register this device with your Smallstep team:"
   echo ""
-  echo "${bold}sudo step-agent-plugin register <team-slug>${normal}"
+  echo "${bold}sudo step-agent register <team-slug>${normal}"
   echo ""
 else
   echo ""
   echo "To continue, register this device with your Smallstep team:"
   echo ""
-  echo "${bold}sudo step-agent-plugin register ${TEAM}${normal}"
+  echo "${bold}sudo step-agent register ${TEAM}${normal}"
   echo ""
 fi
