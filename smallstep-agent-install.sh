@@ -160,18 +160,13 @@ EOT
   if [ "$(grep -Ei 'arch' /etc/*release)" ]; then
     echo "Installing step-agent for ${DISTRO}..."
 
-    VERSION=$(curl -fsSL https://api.github.com/repos/smallstep/step-agent-plugin/releases/latest | grep '"tag_name"' | sed 's/.*"v\(.*\)".*/\1/')
-    if [[ -z "$VERSION" ]]; then
-      echo "Failed to determine the latest step-agent version."
-      exit 1
-    fi
+    PKG_URL="https://packages.smallstep.com/stable/linux/step-agent_${ARCH}_latest.pkg.tar.zst"
+    PKG_FILE="/tmp/step-agent_${ARCH}_latest.pkg.tar.zst"
 
-    PKG_URL="https://github.com/smallstep/step-agent-plugin/releases/download/v${VERSION}/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
-
-    echo "Downloading step-agent ${VERSION}..."
-    curl -fsSL -o "/tmp/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst" "$PKG_URL"
-    pacman -U --noconfirm "/tmp/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
-    rm -f "/tmp/step-agent-${VERSION}-1-${GNUARCH}.pkg.tar.zst"
+    echo "Downloading step-agent..."
+    curl -fsSL -o "$PKG_FILE" "$PKG_URL"
+    pacman -U --noconfirm "$PKG_FILE"
+    rm -f "$PKG_FILE"
   fi
 
 else
